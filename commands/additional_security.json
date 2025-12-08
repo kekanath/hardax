@@ -1,0 +1,76 @@
+{
+  "checks": [
+    {
+      "category": "ADDITIONAL SECURITY",
+      "label": "Play Protect",
+      "command": "settings get secure package_verifier_enable",
+      "safe_pattern": "^1$",
+      "level": "warning",
+      "description": "Play Protect should be enabled"
+    },
+    {
+      "category": "ADDITIONAL SECURITY",
+      "label": "Security Patch Level",
+      "command": "getprop ro.build.version.security_patch",
+      "safe_pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "level": "info",
+      "description": "Check for latest Android patch level"
+    },
+    {
+      "category": "ADDITIONAL SECURITY",
+      "label": "Keyguard Timeout",
+      "command": "settings get secure lock_screen_lock_after_timeout",
+      "safe_pattern": ".*",
+      "level": "info",
+      "description": "Time delay before screen locks"
+    },
+    {
+      "category": "ADDITIONAL SECURITY",
+      "label": "Third-Party App Stores",
+      "command": "pm list packages | grep -E 'amazon|aptoide|getjar'",
+      "safe_pattern": "^$",
+      "level": "warning",
+      "description": "Avoid non-Google app stores"
+    },
+    {
+      "category": "ADDITIONAL SECURITY",
+      "label": "User-installed Apps",
+      "command": "pm list packages -3 | wc -l",
+      "safe_pattern": ".*",
+      "level": "info",
+      "description": "Check how many user apps installed"
+    },
+    {
+      "category": "ADDITIONAL SECURITY",
+      "label": "Logcat Access",
+      "command": "getprop ro.debuggable",
+      "safe_pattern": "^0$",
+      "level": "critical",
+      "description": "Only system should access logs"
+    },
+    {
+      "category": "ADDITIONAL SECURITY",
+      "label": "Unusual Files in /sdcard/",
+      "command": "ls /sdcard/ | grep -Ei '(key|creds|dump|log|backup)'",
+      "safe_pattern": "^$",
+      "level": "warning",
+      "description": "Sensitive files in user-accessible storage"
+    },
+    {
+      "category": "ADDITIONAL SECURITY",
+      "label": "Wi-Fi SSID",
+      "command": "dumpsys netstats | grep -i 'iface=wlan0'",
+      "safe_pattern": ".*",
+      "level": "info",
+      "description": "Shows current Wi-Fi network"
+    },
+    {
+      "category": "ADDITIONAL SECURITY",
+      "label": "Zygote Process Check",
+      "command": "ps | grep zygote",
+      "safe_pattern": "zygote",
+      "level": "critical",
+      "description": "Zygote process is core to Android app lifecycle"
+    }
+  ]
+}

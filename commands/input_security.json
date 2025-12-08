@@ -1,0 +1,12 @@
+{
+  "checks": [
+    {
+      "category": "INPUT SECURITY",
+      "label": "No 3rd party keyboards installed",
+      "command": "ime list -a",
+      "safe_pattern": "no 3rd party",
+      "level": "warning",
+      "description": "Only system keyboards must be installed"
+    }
+  ]
+}

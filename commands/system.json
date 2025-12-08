@@ -1,0 +1,100 @@
+{
+  "checks": [
+    {
+      "category": "SYSTEM",
+      "label": "Kernel Version",
+      "command": "uname -r",
+      "safe_pattern": ".*",
+      "level": "info",
+      "description": "Kernel build/version details"
+    },
+    {
+      "category": "SYSTEM",
+      "label": "Audit Logs Enabled",
+      "command": "cat /proc/sys/kernel/printk",
+      "safe_pattern": ".*",
+      "level": "warning",
+      "description": "Non-zero values indicate audit logs may be active"
+    },
+    {
+      "category": "SYSTEM",
+      "label": "ASLR Enabled",
+      "command": "cat /proc/sys/kernel/randomize_va_space",
+      "safe_pattern": "^2$",
+      "level": "critical",
+      "description": "ASLR must be enabled (value 2) to randomize memory layout and protect against memory-based attacks."
+    },
+    {
+      "category": "SYSTEM",
+      "label": "KASLR Enabled",
+      "command": "dmesg | grep -i kaslr",
+      "safe_pattern": ".*enabled.*",
+      "level": "critical",
+      "description": "Kernel Address Space Layout Randomization (KASLR) should be enabled to randomize kernel memory layout."
+    },
+    {
+      "category": "SYSTEM",
+      "label": "NX (No eXecute) Bit Enabled",
+      "command": "dmesg | grep -i NX",
+      "safe_pattern": ".*NX.*protection.*",
+      "level": "critical",
+      "description": "NX bit must be enabled to prevent execution of code in data memory regions."
+    },
+    {
+      "category": "SYSTEM",
+      "label": "Core Dumps Disabled",
+      "command": "cat /proc/sys/kernel/core_pattern",
+      "safe_pattern": "^\\|/dev/null$",
+      "level": "high",
+      "description": "Core dumps should be disabled to prevent sensitive data leakage."
+    },
+    {
+      "category": "SYSTEM",
+      "label": "SECCOMP Enabled",
+      "command": "zcat /proc/config.gz | grep CONFIG_SECCOMP=",
+      "safe_pattern": "CONFIG_SECCOMP=Y",
+      "level": "high",
+      "description": "SECCOMP must be enabled to restrict system calls."
+    },
+    {
+      "category": "SYSTEM",
+      "label": "Kernel Modules Loading Restricted",
+      "command": "cat /proc/sys/kernel/modules_disabled",
+      "safe_pattern": "^1$",
+      "level": "high",
+      "description": "Kernel module loading should be disabled after boot to prevent unauthorized module insertion."
+    },
+    {
+      "category": "SYSTEM",
+      "label": "Protected Symlinks Enabled",
+      "command": "cat /proc/sys/fs/protected_symlinks",
+      "safe_pattern": "^1$",
+      "level": "medium",
+      "description": "Symlink protection should be enabled to prevent symlink-based privilege escalation."
+    },
+    {
+      "category": "SYSTEM",
+      "label": "Protected Hardlinks Enabled",
+      "command": "cat /proc/sys/fs/protected_hardlinks",
+      "safe_pattern": "^1$",
+      "level": "medium",
+      "description": "Hardlink protection should be enabled to prevent unauthorized file access."
+    },
+    {
+      "category": "SYSTEM",
+      "label": "dmesg Restriction Enabled",
+      "command": "cat /proc/sys/kernel/dmesg_restrict",
+      "safe_pattern": "^1$",
+      "level": "medium",
+      "description": "Restricting dmesg access prevents unprivileged users from reading kernel logs."
+    },
+    {
+      "category": "SYSTEM",
+      "label": "Audit Logs Enabled (duplicate)",
+      "command": "cat /proc/sys/kernel/printk",
+      "safe_pattern": ".*",
+      "level": "warning",
+      "description": "Non-zero printk values may indicate logging."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "checks": [
+    {
+      "category": "NETWORK",
+      "label": "DNS Servers",
+      "command": "getprop net.dns1",
+      "safe_pattern": ".*",
+      "level": "info",
+      "description": "Check DNS configs"
+    },
+    {
+      "category": "NETWORK",
+      "label": "User Certs",
+      "command": "ls /data/misc/user/0/cacerts-added/ | wc -l",
+      "safe_pattern": "^0$",
+      "level": "warning",
+      "description": "Certs could bypass pinning"
+    },
+    {
+      "category": "NETWORK",
+      "label": "World-Writable Files",
+      "command": "find /data -type f \\( -perm -o+w \\) -exec ls -l {} \\; 2>/dev/null | wc -l",
+      "safe_pattern": "^0$",
+      "level": "critical",
+      "description": "Unprotected sensitive files"
+    },
+    {
+      "category": "NETWORK",
+      "label": "Wi-Fi Security (WPA3)",
+      "command": "dumpsys wifi | grep 'WPA3-'",
+      "safe_pattern": "WPA3",
+      "level": "warning",
+      "description": "WPA3 should be preferred over WPA2 for stronger Wi-Fi security"
+    },
+    {
+      "category": "NETWORK",
+      "label": "DNS-over-TLS Enabled",
+      "command": "settings get global private_dns_mode",
+      "safe_pattern": "^hostname$",
+      "level": "warning",
+      "description": "DNS-over-TLS (DoT) should be enabled for encrypted DNS"
+    },
+    {
+      "category": "NETWORK",
+      "label": "ARP Table Dump",
+      "command": "cat /proc/net/arp",
+      "safe_pattern": ".*",
+      "level": "info",
+      "description": "Lists resolved ARP IP-MAC mappings"
+    },
+    {
+      "category": "NETWORK",
+      "label": "Proxy Configuration",
+      "command": "settings get global http_proxy",
+      "safe_pattern": "^$",
+      "level": "warning",
+      "description": "Proxy set may indicate MITM or forced redirection"
+    },
+    {
+      "category": "NETWORK",
+      "label": "Captive Portal Detection",
+      "command": "settings get global captive_portal_mode",
+      "safe_pattern": "^1$",
+      "level": "warning",
+      "description": "Should be 1 (default); 0 disables captive portal checks"
+    }
+  ]
+}

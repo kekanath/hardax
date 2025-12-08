@@ -1,0 +1,36 @@
+{
+  "checks": [
+    {
+      "category": "STORAGE",
+      "label": "Hidden or Extra Partitions",
+      "command": "cat /proc/partitions | grep -Ev 'mmcblk0p[0-9]+|sda[0-9]+'",
+      "safe_pattern": "^$",
+      "level": "info",
+      "description": "Detects non-standard or extra partitions"
+    },
+    {
+      "category": "STORAGE",
+      "label": "SDCard Mount RW",
+      "command": "mount | grep /sdcard | grep rw",
+      "safe_pattern": "^$",
+      "level": "warning",
+      "description": "SDCard should not be mounted read-write in restricted environments"
+    },
+    {
+      "category": "STORAGE",
+      "label": "Orphaned Files in /data",
+      "command": "find /data -type f -uid 0 ! -user system 2>/dev/null | wc -l",
+      "safe_pattern": "^0$",
+      "level": "info",
+      "description": "Looks for files owned by root but not by 'system' user"
+    },
+    {
+      "category": "STORAGE",
+      "label": "External Storage Encryption",
+      "command": "getprop ro.crypto.volume.filenames_mode",
+      "safe_pattern": "^aes-256-cts$",
+      "level": "warning",
+      "description": "External storage filenames should be encrypted"
+    }
+  ]
+}

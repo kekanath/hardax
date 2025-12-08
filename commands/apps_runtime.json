@@ -1,0 +1,76 @@
+{
+  "checks": [
+    {
+      "category": "APPS & RUNTIME",
+      "label": "Root Access (su)",
+      "command": "which su",
+      "safe_pattern": "^$",
+      "level": "critical",
+      "description": "Check for root binaries"
+    },
+    {
+      "category": "APPS & RUNTIME",
+      "label": "Debuggable Apps",
+      "command": "pm list packages -d | wc -l",
+      "safe_pattern": "^0$",
+      "level": "warning",
+      "description": "Debuggable apps should be 0"
+    },
+    {
+      "category": "APPS & RUNTIME",
+      "label": "Accessibility Services",
+      "command": "settings get secure enabled_accessibility_services",
+      "safe_pattern": "^$",
+      "level": "warning",
+      "description": "Keylogging/clickjacking risk"
+    },
+    {
+      "category": "APPS & RUNTIME",
+      "label": "Device Admin Apps",
+      "command": "dumpsys device_policy | grep 'Admin:' | wc -l",
+      "safe_pattern": "^0$",
+      "level": "warning",
+      "description": "Admins may have control"
+    },
+    {
+      "category": "APPS & RUNTIME",
+      "label": "Running Services Count",
+      "command": "dumpsys activity services | grep -E 'package|process' | wc -l",
+      "safe_pattern": ".*",
+      "level": "info",
+      "description": "Running services on device"
+    },
+    {
+      "category": "APPS & RUNTIME",
+      "label": "Frida Detected",
+      "command": "pm list packages | grep frida",
+      "safe_pattern": "^$",
+      "level": "critical",
+      "description": "Frida binary indicates runtime manipulation"
+    },
+    {
+      "category": "APPS & RUNTIME",
+      "label": "Magisk Detected",
+      "command": "pm list packages | grep magisk",
+      "safe_pattern": "^$",
+      "level": "critical",
+      "description": "Magisk can hide root access"
+    },
+    {
+      "category": "APPS & RUNTIME",
+      "label": "Xposed Framework",
+      "command": "pm list packages | grep xposed",
+      "safe_pattern": "^$",
+      "level": "critical",
+      "description": "Xposed framework enables deep system tweaks"
+    },
+    {
+      "category": "APPS & RUNTIME",
+      "label": "Unapproved APKs in /data/local/tmp",
+      "command": "ls /data/local/tmp/*.apk",
+      "safe_pattern": "^ls:.*No such file or directory$",
+      "level": "warning",
+      "description": "Unauthorized sideloading or testing APKs"
+    }
+  ]
+}

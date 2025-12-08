@@ -1,0 +1,12 @@
+{
+  "checks": [
+    {
+      "category": "ADB TRUST",
+      "label": "ADB Over Network Port",
+      "command": "getprop service.adb.tcp.port",
+      "safe_pattern": "^$",
+      "level": "safe",
+      "description": "Should be empty or disabled; non-default = risk"
+    }
+  ]
+}

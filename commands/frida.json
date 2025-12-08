@@ -1,0 +1,12 @@
+{
+  "checks": [
+    {
+      "category": "FRIDA",
+      "label": "Frida Server Listening",
+      "command": "ps | grep frida-server",
+      "safe_pattern": "^$",
+      "level": "critical",
+      "description": "Frida server process found"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "checks": [
+    {
+      "category": "SELinux",
+      "label": "SELinux Denials",
+      "command": "dmesg | grep 'avc:  denied'",
+      "safe_pattern": "^$",
+      "level": "warning",
+      "description": "Check for SELinux policy violations"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "checks": [
+    {
+      "category": "ROOT",
+      "label": "Systemless Root Path",
+      "command": "ls /sbin | grep magisk",
+      "safe_pattern": "^$",
+      "level": "critical",
+      "description": "Magisk binary indicates systemless root"
+    }
+  ]
+}
