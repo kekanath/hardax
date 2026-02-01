@@ -1,0 +1,2380 @@
+CRISCAN - Security Audit Report
+Generated: 2026-02-01 10:54:27
+
+Device Information
+Model: SM-A226B
+Brand: samsung
+Manufacturer: samsung
+Name: a22xnnxx
+Soc Manufacturer: Mediatek
+Soc Model: MT6833V/NZA
+Android Version: 13
+Sdk Level: 33
+Build Id: TP1A.220624.014.A226BXXS9DXD2
+Fingerprint: samsung/a22xnnxx/a22x:13/TP1A.220624.014/A226BXXS9DXD2:user/release-keys
+Serialno: R9ZT4030EDK
+Timezone: Asia/Kolkata
+
+Findings
+
+# === ADB SECURITY ===
+Check: ADB Keys Present
+Command: [ -d /data/misc/adb ] && ls /data/misc/adb/*.pub 2>/dev/null | wc -l || echo 0
+Description: ADB authorized keys should exist for trusted connections
+Result:
+0
+Status: WARNING
+
+# === ADB TRUST ===
+Check: ADB TCP Port Exposed
+Command: getprop service.adb.tcp.port
+Description: Should be empty or disabled; non-default = risk
+Result:
+
+Status: SAFE
+
+# === ADDITIONAL SECURITY ===
+Check: Play Protect
+Command: settings get secure package_verifier_enable 2>/dev/null
+Description: Play Protect should be enabled
+Result:
+null
+Status: SAFE
+
+# === ADDITIONAL SECURITY ===
+Check: Security Patch Level
+Command: PATCH_DATE=$(getprop ro.build.version.security_patch 2>/dev/null); if [ -z "$PATCH_DATE" ]; then echo 'UNKNOWN'; exit 1; fi; PATCH_EPOCH=$(date -d "$PATCH_DATE" +%s 2>/dev/null || echo 0); CURRENT_EPOCH=$(date +%s); DAYS_OLD=$(( ($CURRENT_EPOCH - $PATCH_EPOCH) / 86400 )); if [ $DAYS_OLD -lt 90 ]; then echo "RECENT: $PATCH_DATE ($DAYS_OLD days old)"; else echo "OUTDATED: $PATCH_DATE ($DAYS_OLD days old)"; fi
+Description: Security patch must be less than 90 days old
+Result:
+OUTDATED: 2024-03-01 (702 days old)
+Status: CRITICAL
+
+# === ADDITIONAL SECURITY ===
+Check: Keyguard Timeout
+Command: settings get secure lock_screen_lock_after_timeout 2>/dev/null
+Description: Time delay before screen locks
+Result:
+5000
+Status: SAFE
+
+# === ADDITIONAL SECURITY ===
+Check: Third-Party App Stores
+Command: pm list packages 2>/dev/null | grep -E 'amazon|aptoide|getjar'
+Description: Avoid non-Google app stores
+Result:
+
+Status: SAFE
+
+# === ADDITIONAL SECURITY ===
+Check: User-installed Apps
+Command: pm list packages -3 2>/dev/null | wc -l
+Description: Check how many user apps installed
+Result:
+47
+Status: SAFE
+
+# === ADDITIONAL SECURITY ===
+Check: Logcat Access
+Command: getprop ro.debuggable 2>/dev/null
+Description: Only system should access logs
+Result:
+0
+Status: SAFE
+
+# === ADDITIONAL SECURITY ===
+Check: Unusual Files in /sdcard/
+Command: ls /sdcard/ 2>/dev/null | grep -Ei '(key|creds|dump|log|backup)'
+Description: Sensitive files in user-accessible storage
+Result:
+dump.pcap
+tcpdump
+Status: WARNING
+
+# === ADDITIONAL SECURITY ===
+Check: Wi-Fi SSID
+Command: dumpsys netstats 2>/dev/null | grep -i 'iface=wlan0'
+Description: Shows current Wi-Fi network
+Result:
+
+Status: INFO
+
+# === ADDITIONAL SECURITY ===
+Check: Zygote Process Check
+Command: ps 2>/dev/null | grep zygote
+Description: Zygote process is core to Android app lifecycle
+Result:
+root           864     1 6594940 110812 0                   0 S zygote64
+root           865     1 1820636  29648 0                   0 S zygote
+webview_zygote 2120  864 31698232 74148 0                   0 S webview_zygote
+Status: SAFE
+
+# === APP & SYSTEM INTEGRITY ===
+Check: AppOps: private-data access
+Command: dumpsys appops | grep -E 'READ_EXTERNAL_STORAGE|ACCESS_FINE_LOCATION'
+Description: Monitor unexpected accesses to sensitive data
+Result:
+Op READ_EXTERNAL_STORAGE:
+      #1: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #1: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #1: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #1: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #0: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #1: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #0: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #1: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #1: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #1: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      #0: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+    8647c2e: ModeCallback{a3313cf watchinguid=-1 flags=0x0 op=READ_EXTERNAL_STORAGE from uid=u0a227 pid=5079}
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE (allow): 
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE (allow): 
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+      READ_EXTERNAL_STORAGE: mode=ignore
+Status: SAFE
+
+# === APP & SYSTEM INTEGRITY ===
+Check: Security Tools Detected
+Command: pm list packages | grep -E 'org.mobsf|com.offsec.nethunter|de.robv.android.xposed'
+Description: Pentest frameworks or hacking tools found
+Result:
+
+Status: SAFE
+
+# === APP & SYSTEM INTEGRITY ===
+Check: Custom CAs Installed
+Command: ls /data/misc/user/0/cacerts-added/ | wc -l
+Description: Custom certs may bypass pinning
+Result:
+0
+
+ls: /data/misc/user/0/cacerts-added/: Permission denied
+Status: WARNING
+
+# === APP & SYSTEM INTEGRITY ===
+Check: APK Signature Path Check
+Command: pm list packages -f | grep .apk | head -n 1
+Description: Checks for valid APK path info
+Result:
+package:/system/priv-app/ImsLogger/ImsLogger.apk=com.sec.imslogger
+Status: SAFE
+
+# === APPS ===
+Check: Suspicious APK Names
+Command: pm list packages | grep -Ei 'hacker|spy|monitor|remote|keylog|shell'
+Description: Packages with suspicious names
+Result:
+package:com.android.shell
+Status: CRITICAL
+
+# === APPS ===
+Check: Debuggable Apps (Strict)
+Command: pm list packages -d | grep -v 'com.android'
+Description: No non-system apps should be debuggable
+Result:
+package:com.netflix.mediaclient
+package:com.sec.android.app.fm
+package:com.google.android.apps.photos
+package:ai.perplexity.app.android
+package:com.samsung.android.themestore
+package:com.mygalaxy
+package:com.google.android.apps.docs
+package:com.withsecure.dz
+package:tech.httptoolkit.android.v1
+package:com.macdom.ble.blescanner
+package:com.magicpin.local
+package:com.crestron.device_assistant
+package:com.crestron.blackbird.mobile
+package:com.molink.john.hummingbird
+package:eu.faircode.netguard
+package:com.opera.max.oem
+package:com.openai.chatgpt
+package:com.kraph.bledevice
+package:com.google.android.documentsui
+package:com.crestron.airmedia
+package:com.samsung.android.app.spage
+package:com.rfidresearchgroup.rfidtools
+package:com.samsung.ecomm.global.in
+package:com.google.android.apps.maps
+package:com.joeykrim.rootcheck
+package:com.google.android.youtube
+package:waterwala.com.prime
+package:com.microsoft.skydrive
+package:com.google.android.gms.supervision
+package:com.tgelec.setracker
+package:com.alorferi.nfc_rw
+Status: CRITICAL
+
+# === APPS ===
+Check: APK Signature Verification
+Command: dumpsys package verification | grep 'verified=true'
+Description: APK signatures must be verified
+Result:
+
+Status: CRITICAL
+
+# === APPS ===
+Check: Dynamic Code Loading
+Command: pm list packages | grep -E 'dexopt|dynamic'
+Description: Apps should not use dynamic code loading (security risk)
+Result:
+package:com.samsung.android.dynamiclock
+Status: WARNING
+
+# === APPS & RUNTIME ===
+Check: Root Access (su)
+Command: which su
+Description: Check for root binaries
+Result:
+/system_ext/bin/su
+Status: CRITICAL
+
+# === APPS & RUNTIME ===
+Check: Debuggable Apps
+Command: pm list packages -d | wc -l
+Description: Debuggable apps should be 0
+Result:
+31
+Status: WARNING
+
+# === APPS & RUNTIME ===
+Check: Accessibility Services
+Command: settings get secure enabled_accessibility_services
+Description: Keylogging/clickjacking risk
+Result:
+
+Status: SAFE
+
+# === APPS & RUNTIME ===
+Check: Running Services Count
+Command: dumpsys activity services | grep -E 'package|process' | wc -l
+Description: Running services on device
+Result:
+323
+Status: SAFE
+
+# === APPS & RUNTIME ===
+Check: Frida Detected
+Command: pm list packages | grep frida
+Description: Frida binary indicates runtime manipulation
+Result:
+
+Status: SAFE
+
+# === APPS & RUNTIME ===
+Check: Magisk Detected
+Command: pm list packages | grep magisk
+Description: Magisk can hide root access
+Result:
+package:com.topjohnwu.magisk
+Status: CRITICAL
+
+# === APPS & RUNTIME ===
+Check: Xposed Framework
+Command: pm list packages | grep xposed
+Description: Xposed framework enables deep system tweaks
+Result:
+
+Status: SAFE
+
+# === APPS & RUNTIME ===
+Check: Unapproved APKs in /data/local/tmp
+Command: find /data/local/tmp -name "*.apk" 2>/dev/null | wc -l
+Description: Unauthorized sideloading or testing APKs
+Result:
+0
+Status: SAFE
+
+# === AVB ===
+Check: Verified Boot State
+Command: getprop ro.boot.verifiedbootstate
+Description: AVB verifiedbootstate must be green
+Result:
+orange
+Status: CRITICAL
+
+# === AVB ===
+Check: vbmeta Device State
+Command: getprop ro.boot.vbmeta.device_state
+Description: vbmeta device_state must be locked
+Result:
+unlocked
+Status: CRITICAL
+
+# === AVB ===
+Check: AVB Version Present
+Command: getprop ro.boot.avb_version
+Description: AVB version should be present
+Result:
+1.2
+Status: SAFE
+
+# === AVB ===
+Check: avbctl Present
+Command: command -v avbctl >/dev/null 2>&1 && echo present || echo absent
+Description: avbctl binary available for rollback checks
+Result:
+absent
+Status: INFO
+
+# === AVB ===
+Check: Rollback Index (slot 0) > 0
+Command: command -v avbctl >/dev/null 2>&1 && avbctl get-rollback-index 0 2>/dev/null | awk '{print $NF}' || echo 0
+Description: Anti-rollback index should be > 0 (slot 0)
+Result:
+0
+Status: HIGH
+
+# === AVB ===
+Check: Rollback Index (slot 1) > 0
+Command: command -v avbctl >/dev/null 2>&1 && avbctl get-rollback-index 1 2>/dev/null | awk '{print $NF}' || echo 0
+Description: Anti-rollback index should be > 0 (slot 1)
+Result:
+0
+Status: HIGH
+
+# === BACKUP SECURITY ===
+Check: ADB Backup Enabled
+Command: settings get secure backup_enabled
+Description: ADB backup can extract app data - disable if not needed
+Result:
+0
+Status: SAFE
+
+# === BACKUP SECURITY ===
+Check: Auto Backup Service
+Command: dumpsys backup 2>/dev/null | grep 'Auto-restore'
+Description: Auto backup service status
+Result:
+Auto-restore is enabled
+Status: SAFE
+
+# === BACKUP SECURITY ===
+Check: Google Backup Transport
+Command: dumpsys backup 2>/dev/null | grep -i 'transport' | head -1
+Description: Cloud backup transport configuration
+Result:
+Transport whitelist:
+Status: SAFE
+
+# === BACKUP SECURITY ===
+Check: Backup Manager Enabled
+Command: pm list packages -d | grep com.android.providers.backup
+Description: Backup provider package status
+Result:
+
+Status: SAFE
+
+# === BACKUP SECURITY ===
+Check: Local Backup Encryption
+Command: settings get secure backup_local_transport_parameters 2>/dev/null
+Description: Local backup encryption parameters
+Result:
+null
+Status: SAFE
+
+# === BIOMETRICS ===
+Check: Fingerprint Hardware
+Command: pm list features | grep android.hardware.fingerprint
+Description: Fingerprint hardware availability
+Result:
+feature:android.hardware.fingerprint
+Status: SAFE
+
+# === BIOMETRICS ===
+Check: Fingerprint Enrolled
+Command: dumpsys fingerprint 2>/dev/null | grep -i 'enrolled' | head -1
+Description: Fingerprint enrollment status
+Result:
+
+Status: SAFE
+
+# === BIOMETRICS ===
+Check: Face Unlock Enabled
+Command: settings get secure face_unlock_enabled 2>/dev/null
+Description: Face unlock may be less secure than fingerprint/PIN
+Result:
+null
+Status: SAFE
+
+# === BIOMETRICS ===
+Check: Auto-Lock After Biometric
+Command: settings get secure lock_screen_lock_after_timeout
+Description: Time before requiring re-authentication after biometric unlock
+Result:
+5000
+Status: SAFE
+
+# === BIOMETRICS ===
+Check: Smart Lock (Trust Agents)
+Command: settings get secure trust_agents_initialized
+Description: Smart Lock reduces security by keeping device unlocked
+Result:
+1
+Status: WARNING
+
+# === BIOMETRICS ===
+Check: Biometric Strong Auth Required
+Command: settings get secure biometric_strong_auth_timeout_sec 2>/dev/null
+Description: Timeout requiring strong authentication (PIN/password)
+Result:
+null
+Status: INFO
+
+# === BIOMETRICS ===
+Check: Lockdown Mode Available
+Command: settings get secure lockdown_in_power_menu 2>/dev/null
+Description: Lockdown mode should be enabled in power menu
+Result:
+null
+Status: INFO
+
+# === BLUETOOTH ===
+Check: Bluetooth Enabled
+Command: settings get global bluetooth_on
+Description: NIST recommends disabling Bluetooth when not in use (SC-8)
+Result:
+1
+Status: WARNING
+
+# === BLUETOOTH ===
+Check: Discoverable Mode
+Command: settings get global bluetooth_discoverability
+Description: Device should not be discoverable (AC-18)
+Result:
+null
+Status: CRITICAL
+
+# === BLUETOOTH ===
+Check: Secure Pairing Mode
+Command: dumpsys bluetooth_manager | grep 'Pairing mode:'
+Description: Only secure pairing modes should be allowed (NIST IA-2)
+Result:
+
+Status: CRITICAL
+
+# === BLUETOOTH ===
+Check: Bluetooth Encryption
+Command: dumpsys bluetooth_manager | grep 'Encryption:'
+Description: Bluetooth encryption must be enabled (SC-13)
+Result:
+
+Status: CRITICAL
+
+# === BLUETOOTH ===
+Check: Authentication Required
+Command: dumpsys bluetooth_manager | grep 'Authentication:'
+Description: Authentication must be required for pairing (IA-2)
+Result:
+
+Status: CRITICAL
+
+# === BLUETOOTH ===
+Check: BT MAC Randomization
+Command: settings get secure bluetooth_address | grep -E '([0-9A-F]{2}:){5}[0-9A-F]{2}'
+Description: Static MAC addresses should be avoided (SC-8(1))
+Result:
+F0:65:AE:50:30:3F
+Status: WARNING
+
+# === BLUETOOTH ===
+Check: Paired Devices Count
+Command: dumpsys bluetooth_manager | grep 'Bonded devices:' -A 10 | grep 'Device:' | wc -l
+Description: Review all paired devices (AC-3)
+Result:
+0
+Status: SAFE
+
+# === BLUETOOTH ===
+Check: HCI Snoop Logging
+Command: settings get secure bluetooth_hci_log
+Description: HCI logging should be disabled in production (AU-12)
+Result:
+null
+Status: INFO
+
+# === BLUETOOTH ===
+Check: Unnecessary Profiles
+Command: dumpsys bluetooth_manager | grep 'Profile:' | grep -vE 'A2DP|HFP|HSP'
+Description: Disable unused profiles (CM-7)
+Result:
+Profile: GattService
+Profile: A2dpService
+Profile: AvrcpTargetService:
+Profile: HeadsetService
+Profile: HidDeviceService
+Profile: HidHostService
+Profile: BluetoothMapService
+Profile: BluetoothOppService
+Profile: PanService
+Profile: BluetoothPbapService
+Profile: SapService
+Status: WARNING
+
+# === BLUETOOTH ===
+Check: LE Security Mode
+Command: dumpsys bluetooth_manager | grep 'LE Security Mode:'
+Description: LE should use Mode 2 (Secure Connections) or higher (SC-13)
+Result:
+
+Status: CRITICAL
+
+# === BLUETOOTH ===
+Check: Bluetooth Version
+Command: getprop ro.bluetooth.version
+Description: Bluetooth version should be 5.0 or newer for enhanced features
+Result:
+
+Status: INFO
+
+# === BLUETOOTH ===
+Check: Just Works Pairing
+Command: dumpsys bluetooth_manager | grep -i 'Just Works'
+Description: Just Works insecure pairing method should not be enabled (IA-2)
+Result:
+
+Status: SAFE
+
+# === BLUETOOTH ===
+Check: Link Key Strength
+Command: dumpsys bluetooth_manager | grep -i 'Key Length'
+Description: Link encryption key length must be at least 128 bits (IA-5)
+Result:
+
+Status: CRITICAL
+
+# === BLUETOOTH ===
+Check: Bluetooth Debugging Interface
+Command: dumpsys bluetooth_manager | grep -i 'Debug.*true'
+Description: Bluetooth debugging interfaces must be disabled in production (CM-6)
+Result:
+
+Status: SAFE
+
+# === BLUETOOTH ===
+Check: Secure Simple Pairing (SSP)
+Command: dumpsys bluetooth_manager 2>/dev/null | grep -iq 'Secure Simple Pairing.*Enabled' && echo Enabled || echo Disabled
+Description: Checks if SSP is enabled (downgrade attacks like KNOB are prevented).
+Result:
+Disabled
+Status: CRITICAL
+
+# === BLUETOOTH ===
+Check: Bluedroid Stack Active
+Command: [ $(getprop ro.bluetooth.stack 2>/dev/null | grep -i bluedroid | wc -l) -gt 0 ] && echo VULNERABLE || echo SAFE
+Description: Detects if Bluedroid stack is active (BlueBorne vulnerable; upgrade to Fluoride recommended).
+Result:
+SAFE
+Status: SAFE
+
+# === BLUETOOTH ===
+Check: Bluetooth Firmware Files
+Command: ls /vendor/firmware/bluetooth* /system/etc/firmware/bluetooth* 2>/dev/null | wc -l
+Description: Checks for signed Bluetooth firmware blobs (missing may mean tampering or custom build).
+Result:
+0
+Status: WARNING
+
+# === BLUETOOTH ===
+Check: Raw Radio Device Nodes
+Command: ls /dev/radio* /dev/hci* 2>/dev/null | wc -l
+Description: Exposes low-level radio nodes. Presence may indicate increased attack surface.
+Result:
+0
+Status: SAFE
+
+# === BLUETOOTH ===
+Check: bluetoothd Hardening
+Command: (ps -A -o cmd 2>/dev/null | grep -E 'bluetoothd|bluetooth' | grep -q -- -n) && echo HARDENED || echo UNPROTECTED
+Description: Checks if the Bluetooth daemon runs in hardened (no-privilege) mode.
+Result:
+UNPROTECTED
+Status: WARNING
+
+# === BLUETOOTH ===
+Check: BR/EDR Secure Connections
+Command: settings get global bluetooth_br_edr_secure_connections 2>/dev/null | grep -q '^1$' && echo Enforced || echo NotEnforced
+Description: Should return 'Enforced' to guarantee strong encryption (prevents KNOB attack).
+Result:
+NotEnforced
+Status: SAFE
+
+# === BLUETOOTH ===
+Check: SELinux Bluetooth Policy
+Command: (ls -Z /system/bin/bluetooth* 2>/dev/null | grep -q 'bluetooth:s0') && echo RESTRICTIVE || echo PERMISSIVE
+Description: SELinux domain for Bluetooth should be restrictive to prevent privilege escalation.
+Result:
+PERMISSIVE
+Status: WARNING
+
+# === BLUETOOTH ===
+Check: BLE MAC Randomization
+Command: VAR=$(settings get global bluetooth_address_rotation_enabled 2>/dev/null); if [ -z "$VAR" ]; then echo NotSupported; elif [ "$VAR" = "1" ]; then echo Enabled; else echo Disabled; fi
+Description: Should be enabled to randomize BLE MAC (prevents device tracking/leakage).
+Result:
+Disabled
+Status: INFO
+
+# === BLUETOOTH ===
+Check: Legacy Bluetooth Profiles
+Command: dumpsys bluetooth_manager | grep -E 'OBEX|PAN|SAP'
+Description: Legacy profiles can expose device to known CVEs—disable if not needed.
+Result:
+F1:CC:92:FA:30:E2 {profile connection policy(A2DP=100|A2DP_SINK=-1|CSIP_SET_COORDINATOR=-1|HEADSET=100|HEADSET_CLIENT=-1|HID_HOST=-1|PAN=-1|PBAP=-1|PBAP_CLIENT=-1|MAP=-1|MAP_CLIENT=-1|SAP=-1|HAP=-1|HEARING_AID=-1|LE_AUDIO=-1|VOLUME_CONTROL=-1|LE_CALL_CONTROL=-1|LE_BROADCAST_ASSISTANT=-1|BATTERY=-1), optional codec(support=0|enabled=-1), custom metadata(manufacturer_name=null|model_name=null|software_version=null|hardware_version=null|companion_app=null|main_icon=null|is_untethered_headset=null|untethered_left_icon=null|untethered_right_icon=null|untethered_case_icon=null|untethered_left_battery=null|untethered_right_battery=null|untethered_case_battery=null|untethered_left_charging=null|untethered_right_charging=null|untethered_case_charging=null|enhanced_settings_ui_uri=null|device_type=null|main_battery=null|main_charging=null|main_low_battery_threshold=null|untethered_left_low_battery_threshold=null|untethered_right_low_battery_threshold=null|untethered_case_low_battery_threshold=null|spatial_audio=null|fastpair_customized=null)}
+    24:5D:FC:03:98:3A {profile connection policy(A2DP=100|A2DP_SINK=-1|CSIP_SET_COORDINATOR=-1|HEADSET=-1|HEADSET_CLIENT=-1|HID_HOST=-1|PAN=-1|PBAP=-1|PBAP_CLIENT=-1|MAP=-1|MAP_CLIENT=-1|SAP=-1|HAP=-1|HEARING_AID=-1|LE_AUDIO=-1|VOLUME_CONTROL=-1|LE_CALL_CONTROL=-1|LE_BROADCAST_ASSISTANT=-1|BATTERY=-1), optional codec(support=0|enabled=-1), custom metadata(manufacturer_name=null|model_name=null|software_version=null|hardware_version=null|companion_app=null|main_icon=null|is_untethered_headset=null|untethered_left_icon=null|untethered_right_icon=null|untethered_case_icon=null|untethered_left_battery=null|untethered_right_battery=null|untethered_case_battery=null|untethered_left_charging=null|untethered_right_charging=null|untethered_case_charging=null|enhanced_settings_ui_uri=null|device_type=null|main_battery=null|main_charging=null|main_low_battery_threshold=null|untethered_left_low_battery_threshold=null|untethered_right_low_battery_threshold=null|untethered_case_low_battery_threshold=null|spatial_audio=null|fastpair_customized=null)}
+Status: WARNING
+
+# === BLUETOOTH ===
+Check: Custom Vendor Bluetooth Binaries
+Command: ls /vendor/lib*/hw/bluetooth* /system/lib*/hw/bluetooth* 2>/dev/null | wc -l
+Description: Lists vendor or custom Bluetooth libraries (review for supply chain risk).
+Result:
+0
+Status: INFO
+
+# === BLUETOOTH ===
+Check: Bluetooth Stack Version
+Command: dumpsys package com.android.bluetooth | grep versionName
+Description: Review the version of the Bluetooth stack package.
+Result:
+versionName=13
+Status: SAFE
+
+# === BLUETOOTH ===
+Check: Bluetooth Service Crashes
+Command: logcat -d -b crash | grep -i bluetooth | tail -n 5
+Description: Recent crashes in Bluetooth stack may indicate exploits or instability.
+Result:
+
+Status: SAFE
+
+# === BLUETOOTH ===
+Check: Scan Always Available
+Command: settings get global ble_scan_always_enabled
+Description: Should be disabled to prevent background BLE scanning (privacy risk).
+Result:
+1
+Status: WARNING
+
+# === BLUETOOTH ===
+Check: Apps with BLUETOOTH Permission
+Command: pm list permissions -g -d | grep -A1 'BLUETOOTH$' | grep -c 'package:'
+Description: Too many apps with BLUETOOTH permission increases risk.
+Result:
+0
+Status: WARNING
+
+# === BLUETOOTH ===
+Check: Bluetooth Debug Properties
+Command: getprop | grep -i bluetooth | grep -i debug
+Description: Debug properties for Bluetooth should not be set on production.
+Result:
+
+Status: SAFE
+
+# === BOOT & SECURITY ===
+Check: Encryption
+Command: getprop ro.crypto.state
+Description: Storage should be encrypted
+Result:
+encrypted
+Status: SAFE
+
+# === BOOT & SECURITY ===
+Check: SELinux Enforcing Mode
+Command: getenforce
+Description: SELinux should be enforcing
+Result:
+Enforcing
+Status: SAFE
+
+# === BOOT & SECURITY ===
+Check: OEM Unlock Allowed
+Command: getprop sys.oem_unlock_allowed
+Description: Should be disabled to prevent unlock
+Result:
+1
+Status: CRITICAL
+
+# === BOOT & SECURITY ===
+Check: USB Debugging
+Command: settings get global adb_enabled
+Description: Disable unless needed
+Result:
+1
+Status: WARNING
+
+# === BOOT & SECURITY ===
+Check: Unknown Sources
+Command: settings get secure install_non_market_apps
+Description: Should be disabled
+Result:
+1
+Status: WARNING
+
+# === BOOT & SECURITY ===
+Check: Safe Mode
+Command: getprop persist.sys.safemode
+Description: Should not be running in Safe Mode
+Result:
+
+Status: INFO
+
+# === BOOT & SECURITY ===
+Check: FRP Policy
+Command: settings get global frp_policy
+Description: Factory Reset Protection should be enabled
+Result:
+null
+Status: CRITICAL
+
+# === BOOT & SECURITY ===
+Check: ADB Over Wi-Fi
+Command: settings get global adb_wifi_enabled
+Description: Risky if enabled
+Result:
+0
+Status: SAFE
+
+# === BOOT & SECURITY ===
+Check: Bootloader Locked
+Command: getprop ro.boot.flash.locked
+Description: 1 means locked bootloader; 0 means unlocked
+Result:
+0
+Status: CRITICAL
+
+# === BOOTLOADER ===
+Check: Fastboot Unlock Allowed
+Command: getprop ro.oem_unlock_supported
+Description: Fastboot OEM unlock must be disabled
+Result:
+
+Status: CRITICAL
+
+# === BOOTLOADER & POLICY ===
+Check: OEM Unlock Disabled (Global Setting)
+Command: settings get global oem_unlock_allowed 2>/dev/null
+Description: OEM unlock should be disallowed by policy (0)
+Result:
+null
+Status: HIGH
+
+# === BOOTLOADER & POLICY ===
+Check: FRP Partition Path Set
+Command: getprop ro.frp.pst
+Description: Factory Reset Protection partition path configured
+Result:
+/dev/block/persistent
+Status: SAFE
+
+# === CERTIFICATES ===
+Check: User-Installed CA Certificates
+Command: ls /data/misc/user/0/cacerts-added/ 2>/dev/null | wc -l
+Description: User CA certs can enable MITM attacks - review if present
+Result:
+0
+Status: SAFE
+
+# === CERTIFICATES ===
+Check: System CA Store Modified
+Command: ls /system/etc/security/cacerts/ 2>/dev/null | wc -l
+Description: System CA store should have standard number of certs (~150)
+Result:
+125
+Status: SAFE
+
+# === CERTIFICATES ===
+Check: Certificate Pinning Bypass Apps
+Command: pm list packages | grep -iE 'sslunpin|trustme|justtrustme|certbypass'
+Description: SSL pinning bypass tools detected
+Result:
+
+Status: SAFE
+
+# === CERTIFICATES ===
+Check: Network Security Config
+Command: find /data/app -name 'network_security_config.xml' 2>/dev/null | wc -l
+Description: Apps using network security configuration
+Result:
+0
+Status: SAFE
+
+# === CERTIFICATES ===
+Check: Cleartext Traffic Permitted
+Command: settings get global captive_portal_use_https 2>/dev/null
+Description: HTTPS should be enforced for captive portal detection
+Result:
+null
+Status: WARNING
+
+# === CHECKS CIS ===
+Check: USB File Transfer Disabled
+Command: settings get global usb_mass_storage_enabled 2>/dev/null
+Description: Should be disabled to block unauthorized USB file access
+Result:
+1
+Status: WARNING
+
+# === CHECKS CIS ===
+Check: Wi-Fi Direct Disabled (WFD)
+Command: pm list packages 2>/dev/null | grep -i wfd
+Description: Wi-Fi Direct (WFD) package should be removed if unused
+Result:
+
+Status: SAFE
+
+# === CHECKS CIS ===
+Check: Auto System Update Enabled
+Command: settings get global auto_update_system 2>/dev/null
+Description: Auto updates improve patch consistency
+Result:
+null
+Status: INFO
+
+# === CHECKS CIS ===
+Check: Credential Storage Cleared
+Command: ls /data/misc/keystore/user_0 2>&1
+Description: No residual user credential files
+Result:
+ls: /data/misc/keystore/user_0: Permission denied
+Status: INFO
+
+# === CRYPTOGRAPHY ===
+Check: Hardware-Backed Keystore
+Command: getprop ro.hardware.keystore
+Description: Hardware-backed keystore should be present for secure key storage
+Result:
+mdfpp
+Status: SAFE
+
+# === CRYPTOGRAPHY ===
+Check: Keymaster Version
+Command: getprop ro.hardware.keystore_desede 2>/dev/null || getprop ro.boot.keymaster.version
+Description: Keymaster HAL version for hardware crypto
+Result:
+true
+Status: SAFE
+
+# === CRYPTOGRAPHY ===
+Check: StrongBox Support
+Command: getprop ro.hardware.strongbox 2>/dev/null
+Description: StrongBox provides tamper-resistant key storage
+Result:
+
+Status: INFO
+
+# === CRYPTOGRAPHY ===
+Check: Encryption Type
+Command: getprop ro.crypto.type
+Description: File-based encryption (FBE) preferred over full-disk (FDE)
+Result:
+file
+Status: SAFE
+
+# === CRYPTOGRAPHY ===
+Check: Crypto Hardware Acceleration
+Command: cat /proc/crypto | grep -E 'aes|sha' | head -5
+Description: Hardware crypto acceleration status
+Result:
+cat: /proc/crypto: Permission denied
+Status: SAFE
+
+# === CRYPTOGRAPHY ===
+Check: Key Attestation Support
+Command: pm list features | grep android.hardware.keystore.app_attest_key
+Description: Key attestation verifies keys are hardware-backed
+Result:
+
+Status: WARNING
+
+# === CRYPTOGRAPHY ===
+Check: Verified Boot Key Hash
+Command: getprop ro.boot.vbmeta.digest 2>/dev/null | head -c 16
+Description: Verified boot cryptographic hash present
+Result:
+68334ae9d4f35d3c
+Status: SAFE
+
+# === DANGEROUS PERMISSIONS ===
+Check: Apps with All Permissions
+Command: pm list packages -3 2>/dev/null | cut -d: -f2 | while read pkg; do perms=$(dumpsys package $pkg 2>/dev/null | grep -c 'android.permission'); if [ "$perms" -gt 20 ]; then echo $pkg; fi; done | wc -l
+Description: Apps with excessive permissions
+Result:
+32
+Status: WARNING
+
+# === DANGEROUS PERMISSIONS ===
+Check: SMS Permission Apps
+Command: pm list packages -p 2>/dev/null | grep -l 'READ_SMS\|SEND_SMS\|RECEIVE_SMS' | wc -l || echo 0
+Description: Apps with SMS access can intercept OTPs
+Result:
+0
+Status: SAFE
+
+# === DANGEROUS PERMISSIONS ===
+Check: Call Log Access Apps
+Command: dumpsys package 2>/dev/null | grep -B5 'READ_CALL_LOG' | grep 'Package \[' | wc -l
+Description: Apps with call log access
+Result:
+0
+Status: SAFE
+
+# === DANGEROUS PERMISSIONS ===
+Check: Location Always Apps
+Command: dumpsys package 2>/dev/null | grep -B5 'ACCESS_BACKGROUND_LOCATION' | grep 'Package \[' | wc -l
+Description: Apps with background location access
+Result:
+0
+Status: SAFE
+
+# === DANGEROUS PERMISSIONS ===
+Check: Camera Background Access
+Command: dumpsys package 2>/dev/null | grep -B5 'CAMERA' | grep -A5 'Package \[' | grep -c 'background'
+Description: Apps with background camera access
+Result:
+0
+Status: SAFE
+
+# === DANGEROUS PERMISSIONS ===
+Check: Usage Stats Access
+Command: appops query-op --user 0 USAGE_ACCESS allow 2>/dev/null | wc -l
+Description: Apps that can see app usage patterns
+Result:
+0
+Status: SAFE
+
+# === DANGEROUS PERMISSIONS ===
+Check: Install Unknown Apps
+Command: pm list packages -3 2>/dev/null | cut -d: -f2 | xargs -I{} sh -c 'appops get {} REQUEST_INSTALL_PACKAGES 2>/dev/null | grep -q allow && echo {}' | wc -l
+Description: Apps allowed to install other apps
+Result:
+0
+
+xargs: Unknown option 'I{}' (see "xargs --help")
+Status: WARNING
+
+# === DANGEROUS PERMISSIONS ===
+Check: Notification Listeners
+Command: settings get secure enabled_notification_listeners
+Description: Notification listeners can read all notifications including OTPs
+Result:
+com.google.android.projection.gearhead/com.google.android.gearhead.notifications.SharedNotificationListenerManager$ListenerService:com.sec.android.app.launcher/com.android.launcher3.notification.NotificationListener
+Status: WARNING
+
+# === DEBUGGING ===
+Check: System Debug Binaries
+Command: [ -f /system/bin/gdbserver ] || [ -f /system/bin/strace ] && echo FOUND || echo NOTFOUND
+Description: Presence of debug tools increases attack surface
+Result:
+NOTFOUND
+Status: SAFE
+
+# === DEBUGGING ===
+Check: Kernel DebugFS Enabled
+Command: cat /sys/kernel/debug/debug_enabled 2>/dev/null
+Description: Kernel debugfs enabled exposes sensitive kernel interfaces
+Result:
+
+Status: WARNING
+
+# === DEVELOPER OPTIONS ===
+Check: Developer Options Enabled
+Command: settings get global development_settings_enabled
+Description: Developer options should be disabled for security
+Result:
+1
+Status: WARNING
+
+# === DEVELOPER OPTIONS ===
+Check: Mock Locations Enabled
+Command: settings get secure mock_location 2>/dev/null
+Description: Mock locations can be used to spoof GPS
+Result:
+0
+Status: SAFE
+
+# === DEVELOPER OPTIONS ===
+Check: Mock Location App
+Command: settings get secure selected_mock_location_app 2>/dev/null
+Description: No mock location app should be selected
+Result:
+null
+Status: SAFE
+
+# === DEVELOPER OPTIONS ===
+Check: OEM Unlock Enabled
+Command: settings get global oem_unlock_enabled
+Description: OEM unlock allows bootloader unlocking
+Result:
+null
+Status: CRITICAL
+
+# === DEVELOPER OPTIONS ===
+Check: Stay Awake While Charging
+Command: settings get global stay_on_while_plugged_in
+Description: Screen staying on exposes device when unattended
+Result:
+0
+Status: SAFE
+
+# === DEVELOPER OPTIONS ===
+Check: Animation Scale (Dev Mode Check)
+Command: settings get global window_animation_scale
+Description: Modified animation scale indicates developer mode usage
+Result:
+1.0
+Status: SAFE
+
+# === DEVELOPER OPTIONS ===
+Check: USB Configuration Locked
+Command: settings get global usb_config_locked 2>/dev/null
+Description: USB configuration should be locked in enterprise
+Result:
+null
+Status: SAFE
+
+# === DM-VERITY ===
+Check: Verity Mode (cmdline)
+Command: grep -o 'androidboot.veritymode=[^ ]*' /proc/cmdline | cut -d= -f2
+Description: dm-verity should be enforcing
+Result:
+grep: /proc/cmdline: Permission denied
+Status: CRITICAL
+
+# === DM-VERITY ===
+Check: dm-verity-backed Partitions Mounted
+Command: mount | awk '$1 ~ /^dm-/ && $3 ~ /(ext4|f2fs)/ {c++} END{print c+0}'
+Description: At least one partition should be backed by dm-verity
+Result:
+0
+Status: HIGH
+
+# === DM-VERITY ===
+Check: AVB/Verity Success in dmesg
+Command: dmesg 2>/dev/null | grep -iE 'avb.*(success|green)|dm-verity:.*(enabled|ready|using)' | wc -l
+Description: Kernel logs should show AVB/verity success (if accessible)
+Result:
+0
+Status: INFO
+
+# === FILESYSTEM ===
+Check: Mount Points (rw/ro)
+Command: mount | grep -E ' rw| ro'
+Description: Review mounted partitions and access permissions
+Result:
+
+Status: SAFE
+
+# === FILESYSTEM ===
+Check: tmpfs Usage
+Command: mount | grep tmpfs
+Description: Shows use of temporary memory file system
+Result:
+tmpfs on /dev type tmpfs (rw,seclabel,nosuid,relatime,size=2869892k,nr_inodes=717473,mode=755)
+tmpfs on /mnt type tmpfs (rw,seclabel,nosuid,nodev,noexec,relatime,size=2869892k,nr_inodes=717473,mode=755,gid=1000)
+tmpfs on /mnt/installer type tmpfs (rw,seclabel,nosuid,nodev,noexec,relatime,size=2869892k,nr_inodes=717473,mode=755,gid=1000)
+tmpfs on /mnt/androidwritable type tmpfs (rw,seclabel,nosuid,nodev,noexec,relatime,size=2869892k,nr_inodes=717473,mode=755,gid=1000)
+magisk on /debug_ramdisk type tmpfs (rw,seclabel,relatime,size=2869892k,nr_inodes=717473,mode=755)
+tmpfs on /apex type tmpfs (rw,seclabel,nosuid,nodev,noexec,relatime,size=2869892k,nr_inodes=717473,mode=755)
+tmpfs on /linkerconfig type tmpfs (rw,seclabel,nosuid,nodev,noexec,relatime,size=2869892k,nr_inodes=717473,mode=755)
+tmpfs on /storage type tmpfs (rw,seclabel,nosuid,nodev,noexec,relatime,size=2869892k,nr_inodes=717473,mode=755,gid=1000)
+tmpfs on /linkerconfig type tmpfs (rw,seclabel,nosuid,nodev,noexec,relatime,size=2869892k,nr_inodes=717473,mode=755)
+tmpfs on /data_mirror type tmpfs (rw,seclabel,nosuid,nodev,noexec,relatime,size=2869892k,nr_inodes=717473,mode=700,gid=1000)
+tmpfs on /apex/apex-info-list.xml type tmpfs (rw,seclabel,nosuid,nodev,noexec,relatime,size=2869892k,nr_inodes=717473,mode=755)
+magisk on /system/system_ext/bin type tmpfs (ro,seclabel,relatime,size=2869892k,nr_inodes=717473,mode=755)
+magisk on /system/system_ext/bin/magisk type tmpfs (ro,seclabel,relatime,size=2869892k,nr_inodes=717473,mode=755)
+magisk on /system/system_ext/bin/magiskpolicy type tmpfs (ro,seclabel,relatime,size=2869892k,nr_inodes=717473,mode=755)
+Status: SAFE
+
+# === FILESYSTEM ===
+Check: World-Readable Files
+Command: find /data -type f -perm -o+r -exec ls -l {} \; 2>/dev/null | wc -l
+Description: No sensitive files should be world-readable
+Result:
+0
+Status: SAFE
+
+# === FILESYSTEM ===
+Check: SQLite DB Permissions
+Command: find /data/data -name '*.db' -exec ls -l {} \; 2>/dev/null | grep -v 'rw-------'
+Description: SQLite databases should not be world-readable/writable
+Result:
+
+Status: SAFE
+
+# === FRIDA ===
+Check: Frida Server Listening
+Command: ps | grep frida-server
+Description: Frida server process found
+Result:
+
+Status: SAFE
+
+# === HARDWARE INFO ===
+Check: Baseband Version
+Command: getprop gsm.version.baseband
+Description: Modem/baseband firmware version
+Result:
+A226BXXS9DXC1,A226BXXS9DXC1
+Status: SAFE
+
+# === HARDWARE INFO ===
+Check: Bootloader Version
+Command: getprop ro.bootloader
+Description: Bootloader version for firmware tracking
+Result:
+A226BXXS9DXD2
+Status: SAFE
+
+# === HARDWARE INFO ===
+Check: Vendor Security Patch
+Command: getprop ro.vendor.build.security_patch
+Description: Vendor security patch level (separate from OS patch)
+Result:
+2024-03-01
+Status: SAFE
+
+# === HARDWARE INFO ===
+Check: Boot Image Security Patch
+Command: getprop ro.build.version.security_patch_boot 2>/dev/null || echo 'N/A'
+Description: Boot image security patch level
+Result:
+
+Status: SAFE
+
+# === HARDWARE INFO ===
+Check: Hardware Security Level
+Command: getprop ro.hardware.security_level 2>/dev/null
+Description: Hardware security implementation level
+Result:
+
+Status: SAFE
+
+# === HARDWARE INFO ===
+Check: First API Level
+Command: getprop ro.product.first_api_level
+Description: Original API level shipped (affects security requirements)
+Result:
+30
+Status: SAFE
+
+# === HARDWARE INFO ===
+Check: Treble Support
+Command: getprop ro.treble.enabled
+Description: Treble enables faster security updates
+Result:
+true
+Status: SAFE
+
+# === HARDWARE INFO ===
+Check: A/B Partitions (Seamless Updates)
+Command: getprop ro.build.ab_update
+Description: A/B partitions enable seamless security updates
+Result:
+
+Status: INFO
+
+# === HARDWARE INFO ===
+Check: GKI (Generic Kernel Image)
+Command: uname -r | grep -E 'android[0-9]+-[0-9]+\.[0-9]+'
+Description: GKI enables mainline kernel security updates
+Result:
+
+Status: INFO
+
+# === INPUT SECURITY ===
+Check: No 3rd party keyboards installed
+Command: ime list -a
+Description: Only system keyboards must be installed
+Result:
+com.google.android.tts/com.google.android.apps.speech.tts.googletts.settings.asr.voiceime.VoiceInputMethodService:
+  mId=com.google.android.tts/com.google.android.apps.speech.tts.googletts.settings.asr.voiceime.VoiceInputMethodService mSettingsActivityName=com.google.android.apps.speech.tts.googletts.settings.asr.voiceime.ui.VoiceImeSettingsActivity mIsVrOnly=false mSupportsSwitchingToNextInputMethod=false mInlineSuggestionsEnabled=false mSupportsInlineSuggestionsWithTouchExploration=false mSuppressesSpellChecker=false mShowInInputMethodPicker=true mSupportsStylusHandwriting=false
+  mIsDefaultResId=0x0
+  Service:
+    priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=false
+    ServiceInfo:
+      name=com.google.android.apps.speech.tts.googletts.settings.asr.voiceime.VoiceInputMethodService
+      packageName=com.google.android.tts
+      labelRes=0x7f140345 nonLocalizedLabel=null icon=0x0 banner=0x0
+      enabled=true exported=true directBootAware=false
+      permission=android.permission.BIND_INPUT_METHOD
+      flags=0x0
+      ApplicationInfo:
+        name=com.google.android.apps.speech.tts.googletts.GoogleTTSRoot_Application
+        packageName=com.google.android.tts
+        labelRes=0x7f14002d nonLocalizedLabel=null icon=0x7f110000 banner=0x0
+        className=com.google.android.apps.speech.tts.googletts.GoogleTTSRoot_Application
+        processName=com.google.android.tts
+        taskAffinity=null
+        uid=10205 flags=0x34cbbec5 privateFlags=0x8c081100 theme=0x7f1502c2
+        requiresSmallestWidthDp=0 compatibleWidthLimitDp=0 largestWidthLimitDp=0
+        sourceDir=/data/app/~~U0kH87-xcNWQIev4YvnR3w==/com.google.android.tts-MCYP1GV7R8OaHuIoS1MB7A==/base.apk
+        splitSourceDirs=[/data/app/~~U0kH87-xcNWQIev4YvnR3w==/com.google.android.tts-MCYP1GV7R8OaHuIoS1MB7A==/split_config.arm64_v8a.apk, /data/app/~~U0kH87-xcNWQIev4YvnR3w==/com.google.android.tts-MCYP1GV7R8OaHuIoS1MB7A==/split_config.en.apk, /data/app/~~U0kH87-xcNWQIev4YvnR3w==/com.google.android.tts-MCYP1GV7R8OaHuIoS1MB7A==/split_config.xxhdpi.apk]
+        seinfo=default:targetSdkVersion=36
+        seinfoUser=:complete
+        dataDir=/data/user/0/com.google.android.tts
+        deviceProtectedDataDir=/data/user_de/0/com.google.android.tts
+        credentialProtectedDataDir=/data/user/0/com.google.android.tts
+        splitClassLoaderNames=[null, null, null]
+        enabled=true minSdkVersion=32 targetSdkVersion=36 versionCode=210604624 targetSandboxVersion=1
+        supportsRtl=true
+        fullBackupContent=@xml/2132213763
+        dataExtractionRules=@xml/2132213764
+        crossProfile=false
+        category=7
+        HiddenApiEnforcementPolicy=2
+        usesNonSdkApi=false
+        allowsPlaybackCapture=true
+        nativeHeapZeroInitialized=0
+        enableOnBackInvokedCallback=false
+        createTimestamp=2383855
+        knownActivityEmbeddingCerts={}
+com.samsung.android.honeyboard/.service.HoneyBoardService:
+  mId=com.samsung.android.honeyboard/.service.HoneyBoardService mSettingsActivityName=com.samsung.android.honeyboard.settings.common.HoneyBoardSettingsActivity mIsVrOnly=false mSupportsSwitchingToNextInputMethod=false mInlineSuggestionsEnabled=true mSupportsInlineSuggestionsWithTouchExploration=false mSuppressesSpellChecker=false mShowInInputMethodPicker=true mSupportsStylusHandwriting=false
+  mIsDefaultResId=0x7f050007
+  Service:
+    priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=false
+    ServiceInfo:
+      name=com.samsung.android.honeyboard.service.HoneyBoardService
+      packageName=com.samsung.android.honeyboard
+      enabled=true exported=true directBootAware=true
+      permission=android.permission.BIND_INPUT_METHOD
+      flags=0x0
+      ApplicationInfo:
+        name=com.samsung.android.honeyboard.app.HoneyBoardApplication
+        packageName=com.samsung.android.honeyboard
+        labelRes=0x7f1200f3 nonLocalizedLabel=null icon=0x7f0f0000 banner=0x0
+        className=com.samsung.android.honeyboard.app.HoneyBoardApplication
+        processName=com.samsung.android.honeyboard
+        taskAffinity=com.samsung.android.honeyboard
+        uid=10147 flags=0x38d83ec5 privateFlags=0x8c101140 theme=0x7f1301a7
+        requiresSmallestWidthDp=0 compatibleWidthLimitDp=0 largestWidthLimitDp=0
+        sourceDir=/data/app/~~uYaH5RWIcuM_T8DS2vNgCg==/com.samsung.android.honeyboard-skVpzj-X-NE2ZBrkc0pwjw==/base.apk
+        resourceDirs=[/data/overlays/current_locale_apks/files/com.samsung.android.honeyboard.en.apk]
+        overlayPaths=[/data/overlays/current_locale_apks/files/com.samsung.android.honeyboard.en.apk]
+        seinfo=platform:targetSdkVersion=33
+        seinfoUser=:complete
+        dataDir=/data/user/0/com.samsung.android.honeyboard
+        deviceProtectedDataDir=/data/user_de/0/com.samsung.android.honeyboard
+        credentialProtectedDataDir=/data/user/0/com.samsung.android.honeyboard
+        sharedLibraryFiles=[/system/framework/SmpsManager.jar, libSDKRecognitionText.spensdk.samsung.so, /system/framework/com.samsung.android.spensdk.framework-v1.jar]
+        enabled=true minSdkVersion=28 targetSdkVersion=33 versionCode=561048300 targetSandboxVersion=1
+        supportsRtl=true
+        fullBackupContent=true
+        crossProfile=true
+        networkSecurityConfigRes=0x7f15000c
+        HiddenApiEnforcementPolicy=0
+        usesNonSdkApi=false
+        allowsPlaybackCapture=true
+        nativeHeapZeroInitialized=0
+        enableOnBackInvokedCallback=false
+        createTimestamp=2383855
+        knownActivityEmbeddingCerts={}
+com.droidrun.portal/.DroidrunKeyboardIME:
+  mId=com.droidrun.portal/.DroidrunKeyboardIME mSettingsActivityName=null mIsVrOnly=false mSupportsSwitchingToNextInputMethod=false mInlineSuggestionsEnabled=false mSupportsInlineSuggestionsWithTouchExploration=false mSuppressesSpellChecker=false mShowInInputMethodPicker=true mSupportsStylusHandwriting=false
+  mIsDefaultResId=0x0
+  Service:
+    priority=0 preferredOrder=0 match=0x108000 specificIndex=-1 isDefault=false
+    ServiceInfo:
+      name=com.droidrun.portal.DroidrunKeyboardIME
+      packageName=com.droidrun.portal
+      labelRes=0x7f0f0038 nonLocalizedLabel=null icon=0x0 banner=0x0
+      enabled=true exported=true directBootAware=false
+      permission=android.permission.BIND_INPUT_METHOD
+      flags=0x0
+      ApplicationInfo:
+        packageName=com.droidrun.portal
+        labelRes=0x7f0f001d nonLocalizedLabel=null icon=0x7f0d0000 banner=0x0
+        processName=com.droidrun.portal
+        taskAffinity=com.droidrun.portal
+        uid=10294 flags=0x20c8be46 privateFlags=0x8c001000 theme=0x7f100227
+        requiresSmallestWidthDp=0 compatibleWidthLimitDp=0 largestWidthLimitDp=0
+        sourceDir=/data/app/~~ZzDtGyZfpGWx8PcmZu34wg==/com.droidrun.portal-V5DzeqGRzJfCC1udVObN4g==/base.apk
+        seinfo=default:targetSdkVersion=34
+        seinfoUser=:complete
+        dataDir=/data/user/0/com.droidrun.portal
+        deviceProtectedDataDir=/data/user_de/0/com.droidrun.portal
+        credentialProtectedDataDir=/data/user/0/com.droidrun.portal
+        enabled=true minSdkVersion=30 targetSdkVersion=34 versionCode=42 targetSandboxVersion=1
+        supportsRtl=true
+        fullBackupContent=@xml/2131886081
+        dataExtractionRules=@xml/2131886082
+        crossProfile=false
+        HiddenApiEnforcementPolicy=2
+        usesNonSdkApi=false
+        allowsPlaybackCapture=true
+        nativeHeapZeroInitialized=0
+        enableOnBackInvokedCallback=false
+        createTimestamp=2383855
+        knownActivityEmbeddingCerts={}
+Status: WARNING
+
+# === INTEGRITY ===
+Check: Test-keys Build
+Command: getprop ro.build.fingerprint
+Description: Test-keys in fingerprint indicates insecure engineering/debug build
+Result:
+samsung/a22xnnxx/a22x:13/TP1A.220624.014/A226BXXS9DXD2:user/release-keys
+Status: SAFE
+
+# === INTEGRITY ===
+Check: Boot Image Tampered
+Command: ls -l /init /init.rc
+Description: Check for unusual file sizes or dates
+Result:
+ls: /init: Permission denied
+ls: /init.rc: No such file or directory
+Status: SAFE
+
+# === INTEGRITY ===
+Check: System Partition Tampering
+Command: lsattr /system/bin/app_process* 2>/dev/null
+Description: Detects immutability or possible tampering
+Result:
+--------------e----- /system/bin/app_process
+--------------e----- /system/bin/app_process32
+--------------e----- /system/bin/app_process64
+Status: SAFE
+
+# === KERNEL ===
+Check: Kernel Hardening (PAN/UAO)
+Command: zcat /proc/config.gz | grep -E 'CONFIG_ARM64_PAN=|CONFIG_ARM64_UAO='
+Description: Privileged Access Never (PAN) and User Access Override (UAO) should be enabled for memory protection
+Result:
+CONFIG_ARM64_PAN=y
+CONFIG_ARM64_UAO=y
+Status: SAFE
+
+# === KERNEL ===
+Check: Kernel Pointer Leaking
+Command: cat /proc/sys/kernel/kptr_restrict
+Description: Kernel pointers should not be exposed (2 = full restriction)
+Result:
+cat: /proc/sys/kernel/kptr_restrict: Permission denied
+Status: HIGH
+
+# === LOGS ===
+Check: Recent Kernel Crashes
+Command: dmesg | grep -iE 'fatal|panic|oops|BUG:' | tail -n 5
+Description: Recent kernel panics or fatal errors
+Result:
+dmesg: klogctl: Permission denied
+Status: INFO
+
+# === LOGS ===
+Check: Application Crash Log
+Command: logcat -d -b crash | head -n 10
+Description: Recent app crash logs (look for repeated exceptions)
+Result:
+
+Status: SAFE
+
+# === LOGS ===
+Check: SELinux AVC Denials
+Command: dmesg | grep 'avc:  denied'
+Description: Check for any denied SELinux actions
+Result:
+dmesg: klogctl: Permission denied
+Status: WARNING
+
+# === MALWARE SCAN ===
+Check: Suspicious Packages
+Command: pm list packages | grep -Ei 'spy|inject|keylog|steal|remote|sms|trojan'
+Description: Flag suspicious package names
+Result:
+package:com.samsung.android.dsms
+Status: CRITICAL
+
+# === MALWARE & SENSITIVE DATA SCAN ===
+Check: Sensitive/Malicious Files (Recursive)
+Command: find /sdcard/ -type f -iregex '.*(key|creds|dump|log|backup|conf|config|token|password|secret|payload|exploit|malware|trojan|root|hack|shell|\.apk|\.dex|\.so|\.elf|\.sh|\.exe|\.bat)$'
+Description: Finds files on external storage commonly linked to leaks or malware (recursively).
+Result:
+find: bad arg '.*(key|creds|dump|log|backup|conf|config|token|password|secret|payload|exploit|malware|trojan|root|hack|shell|\.apk|\.dex|\.so|\.elf|\.sh|\.exe|\.bat)$'
+Status: WARNING
+
+# === MDM & ENTERPRISE ===
+Check: Device Admin Apps
+Command: dumpsys device_policy 2>/dev/null | grep 'Active admin' | wc -l
+Description: Device admin apps have elevated privileges
+Result:
+0
+Status: SAFE
+
+# === MDM & ENTERPRISE ===
+Check: Device Owner Set
+Command: dumpsys device_policy 2>/dev/null | grep 'Device Owner'
+Description: Device owner (MDM) presence
+Result:
+
+Status: SAFE
+
+# === MDM & ENTERPRISE ===
+Check: Work Profile Present
+Command: pm list users 2>/dev/null | grep -i 'work\|managed'
+Description: Work profile / managed profile detection
+Result:
+
+Status: SAFE
+
+# === MDM & ENTERPRISE ===
+Check: Profile Owner Apps
+Command: dumpsys device_policy 2>/dev/null | grep 'Profile Owner' | wc -l
+Description: Profile owner apps managing work profile
+Result:
+0
+Status: SAFE
+
+# === MDM & ENTERPRISE ===
+Check: Unknown MDM Apps
+Command: pm list packages | grep -iE 'mdm|mobileiron|airwatch|intune|jamf|maas360|knox'
+Description: Known MDM solution packages
+Result:
+package:com.samsung.android.mdm
+package:com.sec.enterprise.mdm.services.simpin
+package:com.mediatek.mdmlsample
+package:com.sec.enterprise.knox.cloudmdm.smdms
+Status: SAFE
+
+# === MDM & ENTERPRISE ===
+Check: Factory Reset Protection
+Command: settings get global frp_active 2>/dev/null
+Description: Factory Reset Protection should be enabled
+Result:
+null
+Status: WARNING
+
+# === MDM & ENTERPRISE ===
+Check: Device Provisioned
+Command: settings get global device_provisioned
+Description: Device setup completion status
+Result:
+1
+Status: SAFE
+
+# === MEMORY ===
+Check: Stack Canaries
+Command: zcat /proc/config.gz | grep CONFIG_CC_STACKPROTECTOR_STRONG
+Description: Stack canaries should be enabled to prevent buffer overflows
+Result:
+CONFIG_CC_STACKPROTECTOR_STRONG=y
+Status: SAFE
+
+# === MEMORY ===
+Check: ROP Mitigation (PAC)
+Command: zcat /proc/config.gz | grep CONFIG_ARM64_PTR_AUTH
+Description: Pointer Authentication (PAC) should be enabled to prevent ROP attacks
+Result:
+
+Status: CRITICAL
+
+# === MEMORY ===
+Check: Memory Tagging (MTE)
+Command: zcat /proc/config.gz | grep CONFIG_ARM64_MTE
+Description: Memory Tagging Extension (MTE) should be enabled for JIT hardening
+Result:
+
+Status: CRITICAL
+
+# === NETWORK ===
+Check: DNS Servers
+Command: getprop net.dns1
+Description: Check DNS configs
+Result:
+
+Status: SAFE
+
+# === NETWORK ===
+Check: World-Writable Files
+Command: find /data -type f \( -perm -o+w \) -exec ls -l {} \; 2>/dev/null | wc -l
+Description: Unprotected sensitive files
+Result:
+0
+Status: SAFE
+
+# === NETWORK ===
+Check: Wi-Fi Security (WPA3)
+Command: dumpsys wifi | grep 'WPA3-'
+Description: WPA3 should be preferred over WPA2 for stronger Wi-Fi security
+Result:
+
+Status: WARNING
+
+# === NETWORK ===
+Check: DNS-over-TLS Enabled
+Command: settings get global private_dns_mode
+Description: DNS-over-TLS (DoT) should be enabled for encrypted DNS
+Result:
+null
+Status: WARNING
+
+# === NETWORK ===
+Check: ARP Table Dump
+Command: cat /proc/net/arp
+Description: Lists resolved ARP IP-MAC mappings
+Result:
+IP address       HW type     Flags       HW address            Mask     Device
+Status: SAFE
+
+# === NETWORK ===
+Check: Proxy Configuration
+Command: settings get global http_proxy
+Description: Proxy set may indicate MITM or forced redirection
+Result:
+null
+Status: SAFE
+
+# === NETWORK ===
+Check: Captive Portal Detection
+Command: settings get global captive_portal_mode
+Description: Should be 1 (default); 0 disables captive portal checks
+Result:
+null
+Status: WARNING
+
+# === NETWORK-IPV4 ===
+Check: All Active TCP Connections (IPv4)
+Command: sh -lc 'netstat -lntp 2>/dev/null || ss -lntp 2>/dev/null || true' | awk '$1 ~ /^tcp/ && $4 ~ /^[0-9.]+:/ { print $0 }'
+Description: Lists all IPv4 TCP connections including localhost — use for full socket audit
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV4 ===
+Check: Common TCP Ports Exposed (IPv4, Warning)
+Command: sh -lc 'netstat -lnpt 2>/dev/null || ss -lnpt 2>/dev/null || true' | awk '$1 ~ /^tcp/ && $0 ~ /LISTEN/ && $4 ~ /:((53)|(80)|(25)|(110)|(143)|(465)|(587)|(993)|(995)|(8080)|(8443)|(22))$/ && $4 !~ /^127\./'
+Description: One or more common TCP ports are externally accessible on IPv4 — review exposure
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV4 ===
+Check: Expanded Critical TCP Ports (excluding SSH) Listening or External (IPv4)
+Command: sh -lc 'netstat -lnpt 2>/dev/null || ss -lnpt 2>/dev/null || true' | awk '$1 ~ /^tcp/ && $0 ~ /LISTEN/ && $4 ~ /:((21)|(23)|(25)|(445)|(3306)|(5432)|(5555)|(5900)|(5901)|(3389)|(5555)|(4444)|(8080)|(8443)|(41795))$/ && $4 !~ /^127\./'
+Description: One or more critical TCP ports (excluding SSH) are open or externally connected (IPv4) — review exposure
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV4 ===
+Check: Open UDP Ports (IPv4, excluding localhost)
+Command: sh -lc 'netstat -lnup 2>/dev/null || ss -lnup 2>/dev/null || true' | awk '$1 ~ /^udp/ && $4 !~ /^127\./'
+Description: Open UDP ports (IPv4) found that are not restricted to localhost
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV4 ===
+Check: UDP Ports 123, 161, 162, 5353 Open (IPv4)
+Command: sh -lc 'netstat -lnup 2>/dev/null || ss -lnup 2>/dev/null || true' | awk '$1 ~ /^udp/ && $4 ~ /:(123|161|162|5353)$/ && $4 !~ /^127\./ { print $4 }'
+Description: UDP Ports 123 (NTP), 161 (SNMP), 162 (Trap), or 5353 (mDNS) are exposed on IPv4 — may leak device or service data
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV4 ===
+Check: Potentially Vulnerable UDP Ports (IPv4)
+Command: sh -lc 'netstat -lnup 2>/dev/null || ss -lnup 2>/dev/null || true' | awk '$1 ~ /^udp/ && $4 ~ /:(69|1900|500|4500|520)$/ && $4 !~ /^127\./ { print $4 }'
+Description: One or more UDP ports (e.g., 69/TFTP, 1900/SSDP) are exposed on IPv4 — potentially vulnerable services detected
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV6 ===
+Check: All Active TCP Connections (IPv6, excluding ::1)
+Command: sh -lc 'netstat -ntp 2>/dev/null || ss -ntp 2>/dev/null || true' | awk '$1 ~ /^tcp6/ && $4 !~ /::1/ { print $0 }'
+Description: Displays all active IPv6 TCP connections (including LISTEN/ESTABLISHED) that are not bound to loopback (::1)
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV6 ===
+Check: Common TCP Ports Exposed (IPv6, Warning)
+Command: sh -lc 'netstat -lnpt 2>/dev/null || ss -lnpt 2>/dev/null || true' | awk '$1 ~ /^tcp6/ && $0 ~ /LISTEN/ && $4 ~ /:((53)|(80)|(25)|(110)|(143)|(465)|(587)|(993)|(995)|(8080)|(8443)|(22))$/ && $4 !~ /::1/'
+Description: One or more common TCP ports are externally accessible on IPv6 — review exposure
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV6 ===
+Check: Expanded Critical TCP Ports (excluding SSH) Listening or External (IPv6)
+Command: sh -lc 'netstat -lnpt 2>/dev/null || ss -lnpt 2>/dev/null || true' | awk '$1 ~ /^tcp6/ && $0 ~ /LISTEN/ && $4 ~ /:((21)|(23)|(25)|(445)|(3306)|(5432)|(5900)|(5901)|(3389)|(5555)|(4444)|(8080)|(8443)|(41795))$/ && $4 !~ /::1/'
+Description: One or more critical TCP ports (excluding SSH) are open or externally connected (IPv6) — review exposure
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV6 ===
+Check: Open UDP Ports (IPv6, excluding localhost)
+Command: sh -lc 'netstat -lnup 2>/dev/null || ss -lnup 2>/dev/null || true' | awk '$1 ~ /^udp6/ && $4 !~ /::1/'
+Description: Open UDP ports (IPv6) found that are not restricted to localhost (::1)
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV6 ===
+Check: UDP Ports 123, 161, 162, 5353 Open (IPv6)
+Command: sh -lc 'netstat -lnup 2>/dev/null || ss -lnup 2>/dev/null || true' | awk '$1 ~ /^udp6/ && $4 ~ /:(123|161|162|5353)$/ && $4 !~ /::1/ { print $4 }'
+Description: UDP Ports 123 (NTP), 161 (SNMP), 162 (Trap), or 5353 (mDNS) are exposed on IPv6 — may leak device or service data
+Result:
+
+Status: SAFE
+
+# === NETWORK-IPV6 ===
+Check: Potentially Vulnerable UDP Ports (IPv6)
+Command: sh -lc 'netstat -lnup 2>/dev/null || ss -lnup 2>/dev/null || true' | awk '$1 ~ /^udp6/ && $4 ~ /:(69|1900|500|4500|520)$/ && $4 !~ /::1/ { print $4 }'
+Description: One or more UDP ports (e.g., 69/TFTP, 1900/SSDP) are exposed on IPv6 — potentially vulnerable services detected
+Result:
+
+Status: SAFE
+
+# === NFC SECURITY ===
+Check: NFC Enabled
+Command: settings get global nfc_on
+Description: NFC should be disabled when not in use to prevent skimming attacks
+Result:
+null
+Status: WARNING
+
+# === NFC SECURITY ===
+Check: Android Beam Enabled
+Command: settings get global android_beam_enabled 2>/dev/null
+Description: Android Beam can be used for unauthorized data transfer
+Result:
+null
+Status: WARNING
+
+# === NFC SECURITY ===
+Check: NFC Payment Default App
+Command: settings get secure nfc_payment_default_component 2>/dev/null
+Description: Default NFC payment application
+Result:
+null
+Status: SAFE
+
+# === NFC SECURITY ===
+Check: HCE Payment Apps
+Command: pm list packages | grep -iE 'pay|wallet|gpay|samsung.*pay' | wc -l
+Description: Host Card Emulation payment apps installed
+Result:
+2
+Status: SAFE
+
+# === NFC SECURITY ===
+Check: NFC Secure Element
+Command: pm list features | grep android.hardware.nfc.hcef
+Description: NFC Secure Element support for secure transactions
+Result:
+
+Status: SAFE
+
+# === PATCHING ===
+Check: OTA Update Path
+Command: getprop ro.build.version.incremental
+Description: OTA incremental version for build tracking
+Result:
+A226BXXS9DXD2
+Status: SAFE
+
+# === PATH ABUSE ===
+Check: Writable Paths in $PATH
+Command: echo $PATH | tr ':' '\n' | awk 'NF' | xargs -I{} sh -c '[ -w "{}" ] && echo "{}"'
+Description: Writable dirs in PATH can lead to privilege escalation
+Result:
+xargs: Unknown option 'I{}' (see "xargs --help")
+Status: CRITICAL
+
+# === POLICY ===
+Check: Disable-Verity Property Not Set
+Command: getprop persist.sys.disable_verity
+Description: Disable-verity must not be enabled on locked devices
+Result:
+
+Status: SAFE
+
+# === PROCESS SNAPSHOT ===
+Check: Top 5 Running Processes
+Command: ps | head -n 5
+Description: Initial list of active processes
+Result:
+USER           PID  PPID     VSZ    RSS WCHAN            ADDR S NAME                       
+root             1     0 2366292   8416 0                   0 S init
+root             2     0       0      0 0                   0 S [kthreadd]
+root             3     2       0      0 0                   0 I [rcu_gp]
+root             4     2       0      0 0                   0 I [kworker/0:0]
+Status: SAFE
+
+# === ROOT ===
+Check: Systemless Root Path
+Command: ls /sbin | grep magisk
+Description: Magisk binary indicates systemless root
+Result:
+ls: /sbin: No such file or directory
+Status: CRITICAL
+
+# === ROOT TRACE ===
+Check: su Binary in Common Paths
+Command: [ -f /system/xbin/su ] || [ -f /system/bin/su ] && echo FOUND || echo NOTFOUND
+Description: su binary indicates rooted device
+Result:
+NOTFOUND
+Status: SAFE
+
+# === SCREEN SECURITY ===
+Check: Screen Lock Enabled
+Command: settings get secure lockscreen.password_type
+Description: Screen lock must be enabled (not 0=none or 65536=swipe)
+Result:
+null
+Status: CRITICAL
+
+# === SCREEN SECURITY ===
+Check: Lock Screen Timeout
+Command: settings get system screen_off_timeout
+Description: Screen timeout value in milliseconds
+Result:
+1800000
+Status: INFO
+
+# === SCREEN SECURITY ===
+Check: Show Password Characters
+Command: settings get system show_password
+Description: Password characters should not be shown
+Result:
+null
+Status: WARNING
+
+# === SCREEN SECURITY ===
+Check: Lock Screen Notifications
+Command: settings get secure lock_screen_show_notifications
+Description: Sensitive notifications visible on lock screen
+Result:
+1
+Status: WARNING
+
+# === SCREEN SECURITY ===
+Check: Overlay Permission Apps
+Command: pm list packages -e 2>/dev/null | xargs -I{} sh -c 'dumpsys package {} 2>/dev/null | grep -q SYSTEM_ALERT_WINDOW && echo {}' | wc -l
+Description: Apps with overlay permission can capture input
+Result:
+0
+
+xargs: Unknown option 'I{}' (see "xargs --help")
+Status: WARNING
+
+# === SCREEN SECURITY ===
+Check: Screen Capture Disabled
+Command: settings get secure screencapture_disabled 2>/dev/null
+Description: Enterprise policy may disable screenshots
+Result:
+null
+Status: SAFE
+
+# === SCREEN SECURITY ===
+Check: Lockdown on Failed Attempts
+Command: settings get global maximum_time_to_unlock 2>/dev/null
+Description: Maximum unlock attempts before lockdown
+Result:
+null
+Status: SAFE
+
+# === SCREEN SECURITY ===
+Check: Quick Settings Tiles on Lock
+Command: settings get secure lock_quick_settings 2>/dev/null
+Description: Quick settings accessible from lock screen
+Result:
+null
+Status: SAFE
+
+# === SELINUX ===
+Check: SELinux Status
+Command: getenforce 2>/dev/null || getprop ro.boot.selinux
+Description: SELinux must be in Enforcing mode for proper security
+Result:
+Enforcing
+Status: SAFE
+
+# === SELINUX ===
+Check: SELinux Policy Version
+Command: cat /sys/fs/selinux/policyvers 2>/dev/null
+Description: SELinux policy version (higher is better, 30+ recommended)
+Result:
+31
+Status: SAFE
+
+# === SELINUX ===
+Check: SELinux Deny Unknown
+Command: cat /sys/fs/selinux/deny_unknown 2>/dev/null
+Description: Unknown access should be denied by default
+Result:
+1
+Status: SAFE
+
+# === SELINUX ===
+Check: SELinux Permissive Domains
+Command: dmesg 2>/dev/null | grep -c 'permissive=' || echo 0
+Description: No domains should be running in permissive mode
+Result:
+0
+0
+Status: WARNING
+
+# === SELINUX ===
+Check: SELinux Boot Parameter
+Command: cat /proc/cmdline | grep -o 'selinux=[01]' || echo 'selinux=1'
+Description: SELinux should not be disabled via boot parameter
+Result:
+selinux=1
+
+cat: /proc/cmdline: Permission denied
+Status: SAFE
+
+# === SIM SECURITY ===
+Check: SIM Card Present
+Command: getprop gsm.sim.state
+Description: SIM card status
+Result:
+ABSENT,ABSENT
+Status: INFO
+
+# === SIM SECURITY ===
+Check: SIM PIN Lock Enabled
+Command: service call iphonesubinfo 3 2>/dev/null | grep -q 'PIN' && echo ENABLED || echo DISABLED
+Description: SIM PIN lock prevents unauthorized SIM use
+Result:
+DISABLED
+Status: WARNING
+
+# === SIM SECURITY ===
+Check: SIM Operator
+Command: getprop gsm.operator.alpha
+Description: Current mobile operator
+Result:
+,
+Status: SAFE
+
+# === SIM SECURITY ===
+Check: Dual SIM Status
+Command: getprop persist.radio.multisim.config
+Description: Dual SIM configuration
+Result:
+dsds
+Status: SAFE
+
+# === SIM SECURITY ===
+Check: eSIM Profiles
+Command: pm list packages | grep -i esim
+Description: eSIM management apps present
+Result:
+
+Status: SAFE
+
+# === SIM SECURITY ===
+Check: Carrier Lock Status
+Command: getprop persist.sys.oem_unlock_allowed 2>/dev/null
+Description: Carrier/network lock status
+Result:
+
+Status: SAFE
+
+# === SLOTS & RECOVERY ===
+Check: bootctl Present
+Command: command -v bootctl >/dev/null 2>&1 && echo present || echo absent
+Description: bootctl available to query slot state
+Result:
+absent
+Status: INFO
+
+# === SLOTS & RECOVERY ===
+Check: Current Slot
+Command: bootctl get-current-slot 2>/dev/null | sed -E 's/.*: *//'
+Description: Device reports current boot slot (a/b or 0/1)
+Result:
+
+Status: INFO
+
+# === SLOTS & RECOVERY ===
+Check: Stock Recovery (No TWRP in PATH)
+Command: command -v twrp >/dev/null 2>&1 && echo found || echo notfound
+Description: No custom recovery binary should be present
+Result:
+notfound
+Status: SAFE
+
+# === STORAGE ===
+Check: Hidden or Extra Partitions
+Command: cat /proc/partitions | grep -Ev 'mmcblk0p[0-9]+|sda[0-9]+'
+Description: Detects non-standard or extra partitions
+Result:
+cat: /proc/partitions: Permission denied
+Status: INFO
+
+# === STORAGE ===
+Check: SDCard Mount RW
+Command: mount | grep /sdcard | grep rw
+Description: SDCard should not be mounted read-write in restricted environments
+Result:
+
+Status: SAFE
+
+# === STORAGE ===
+Check: Orphaned Files in /data
+Command: find /data -type f -uid 0 ! -user system 2>/dev/null | wc -l
+Description: Looks for files owned by root but not by 'system' user
+Result:
+0
+Status: SAFE
+
+# === STORAGE ===
+Check: External Storage Encryption
+Command: getprop ro.crypto.volume.filenames_mode
+Description: External storage filenames should be encrypted
+Result:
+aes-256-cts
+Status: SAFE
+
+# === SYSTEM ===
+Check: Kernel Version
+Command: uname -r
+Description: Kernel build/version details
+Result:
+4.14.186-27218697
+Status: SAFE
+
+# === SYSTEM ===
+Check: Audit Logs Enabled
+Command: cat /proc/sys/kernel/printk
+Description: Non-zero values indicate audit logs may be active
+Result:
+cat: /proc/sys/kernel/printk: Permission denied
+Status: SAFE
+
+# === SYSTEM ===
+Check: ASLR Enabled
+Command: cat /proc/sys/kernel/randomize_va_space
+Description: ASLR must be enabled (value 2) to randomize memory layout and protect against memory-based attacks.
+Result:
+cat: /proc/sys/kernel/randomize_va_space: Permission denied
+Status: CRITICAL
+
+# === SYSTEM ===
+Check: KASLR Enabled
+Command: dmesg | grep -i kaslr
+Description: Kernel Address Space Layout Randomization (KASLR) should be enabled to randomize kernel memory layout.
+Result:
+dmesg: klogctl: Permission denied
+Status: CRITICAL
+
+# === SYSTEM ===
+Check: NX (No eXecute) Bit Enabled
+Command: dmesg | grep -i NX
+Description: NX bit must be enabled to prevent execution of code in data memory regions.
+Result:
+dmesg: klogctl: Permission denied
+Status: CRITICAL
+
+# === SYSTEM ===
+Check: Core Dumps Disabled
+Command: cat /proc/sys/kernel/core_pattern
+Description: Core dumps should be disabled to prevent sensitive data leakage.
+Result:
+cat: /proc/sys/kernel/core_pattern: Permission denied
+Status: HIGH
+
+# === SYSTEM ===
+Check: SECCOMP Enabled
+Command: zcat /proc/config.gz | grep CONFIG_SECCOMP=
+Description: SECCOMP must be enabled to restrict system calls.
+Result:
+CONFIG_SECCOMP=y
+Status: HIGH
+
+# === SYSTEM ===
+Check: Kernel Modules Loading Restricted
+Command: cat /proc/sys/kernel/modules_disabled
+Description: Kernel module loading should be disabled after boot to prevent unauthorized module insertion.
+Result:
+cat: /proc/sys/kernel/modules_disabled: Permission denied
+Status: HIGH
+
+# === SYSTEM ===
+Check: Protected Symlinks Enabled
+Command: cat /proc/sys/fs/protected_symlinks
+Description: Symlink protection should be enabled to prevent symlink-based privilege escalation.
+Result:
+cat: /proc/sys/fs/protected_symlinks: Permission denied
+Status: WARNING
+
+# === SYSTEM ===
+Check: Protected Hardlinks Enabled
+Command: cat /proc/sys/fs/protected_hardlinks
+Description: Hardlink protection should be enabled to prevent unauthorized file access.
+Result:
+cat: /proc/sys/fs/protected_hardlinks: Permission denied
+Status: WARNING
+
+# === SYSTEM ===
+Check: dmesg Restriction Enabled
+Command: cat /proc/sys/kernel/dmesg_restrict
+Description: Restricting dmesg access prevents unprivileged users from reading kernel logs.
+Result:
+cat: /proc/sys/kernel/dmesg_restrict: Permission denied
+Status: WARNING
+
+# === TEE/TPM ===
+Check: TEE Driver Presence
+Command: [ -e /dev/tee0 ] || [ -e /dev/trusty-ipc-dev0 ] && echo PRESENT || echo ABSENT
+Description: TEE driver (Trusted Execution Environment) should exist on modern secure devices
+Result:
+PRESENT
+Status: SAFE
+
+# === TEE/TPM ===
+Check: TPM Keystore Presence
+Command: [ -d /data/misc/keystore ] && echo PRESENT || echo ABSENT
+Description: Checks for hardware-backed keystore modules
+Result:
+ABSENT
+Status: INFO
+
+# === TEE/TPM ===
+Check: TEE Vendor Prop
+Command: getprop | grep -i tee
+Description: Shows any TEE-related properties
+Result:
+[ro.vendor.mtk_svp_on_mtee_support]: [1]
+[ro.vendor.mtk_teegris_tee_support]: [1]
+Status: SAFE
+
+# === USB SECURITY ===
+Check: MTP Access Enabled
+Command: getprop sys.usb.config
+Description: MTP allows file access over USB - review if needed
+Result:
+mtp,adb
+Status: INFO
+
+# === USB SECURITY ===
+Check: USB OTG Enabled
+Command: cat /sys/class/android_usb/android0/enable 2>/dev/null || echo 0
+Description: USB OTG status for external device connections
+Result:
+0
+Status: SAFE
+
+# === USB SECURITY ===
+Check: USB Accessory Mode
+Command: getprop sys.usb.configfs 2>/dev/null
+Description: USB accessory/host mode configuration
+Result:
+1
+Status: SAFE
+
+# === USB SECURITY ===
+Check: Unauthorized ADB Connections
+Command: cat /data/misc/adb/adb_keys 2>/dev/null | wc -l
+Description: Too many authorized ADB keys may indicate unauthorized access
+Result:
+0
+Status: SAFE
+
+# === USB SECURITY ===
+Check: USB Data Signaling Disabled
+Command: settings get global usb_data_signaling 2>/dev/null
+Description: USB data signaling control (Android 13+)
+Result:
+null
+Status: SAFE
+
+# === USER & PRIVACY ===
+Check: Screen Lock
+Command: dumpsys keyguard | grep 'secure=true'
+Description: Screen lock must be enabled
+Result:
+Can't find service: keyguard
+Status: CRITICAL
+
+# === USER & PRIVACY ===
+Check: Clipboard Access
+Command: cmd clipboard get-primary-clip
+Description: Check if clipboard has sensitive data
+Result:
+No shell command implementation.
+Status: INFO
+
+# === USER & PRIVACY ===
+Check: Location Services
+Command: settings get secure location_mode
+Description: Mode 3 means high-accuracy enabled
+Result:
+3
+Status: SAFE
+
+# === USER & PRIVACY ===
+Check: Clipboard History
+Command: dumpsys clipboard | grep 'Historical'
+Description: Clipboard history should be disabled to prevent data leaks
+Result:
+
+Status: SAFE
+
+# === USER & PRIVACY ===
+Check: Biometric Strength
+Command: dumpsys biometric | grep 'Strength='
+Description: Biometric auth should be 'STRONG' (not 'WEAK')
+Result:
+
+Status: WARNING
+
+# === USER & PRIVACY ===
+Check: Backup Allowed
+Command: settings get global backup_enabled
+Description: Auto-backup should be disabled for sensitive apps
+Result:
+null
+Status: WARNING
+
+# === USER & PRIVACY ===
+Check: Fingerprint / Setup Complete
+Command: settings get secure user_setup_complete
+Description: Check if device setup is complete
+Result:
+1
+Status: SAFE
+
+# === USER & PRIVACY ===
+Check: Trust Agents Enabled
+Command: settings get secure enabled_trust_agents
+Description: May allow unlock bypass via smart lock
+Result:
+null
+Status: SAFE
+
+# === USER & PRIVACY ===
+Check: Microphone Usage
+Command: dumpsys media.audio_flinger | grep -i active
+Description: Detects open microphones
+Result:
+mDlbActiveList:
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+    Stage Name					 StageIndex			 Format			 SampleRate			 FC			 ActiveVolCnt		 CurVol
+  Fast tracks: sMaxFastTracks=8 activeMask=0x1
+  Index Active Full Partial Empty  Recent Ready    Written
+Status: INFO
+
+# === USER & PRIVACY ===
+Check: Camera Usage
+Command: dumpsys media.camera | grep -i client
+Description: Detects active camera clients
+Result:
+Active Camera Clients:
+  02-01 00:54:36 : DISCONNECT device 0 client for package com.sec.android.app.camerasaver (PID 12582)
+  02-01 00:54:35 : CONNECT device 0 client for package com.sec.android.app.camerasaver (PID 12582, priority 500)
+  Device 0 is closed, no client instance
+  Device 1 is closed, no client instance
+  Device 21 is closed, no client instance
+  Device 52 is closed, no client instance
+  Device 53 is closed, no client instance
+    0x8015004c (cameraClient) with type 1 (int32) defined in section samsung.android.control
+  02-01 00:54:36 : Device 0 is open. Client instance dump:
+    Client priority score: 500 state: 10
+    Client PID: 12582
+    Client package: com.sec.android.app.camerasaver
+  CameraDeviceClient[0] (0xb4000072eb0177a0) dump:
+    Current client UID 1000
+Status: INFO
+
+# === USER & PRIVACY ===
+Check: Sensors in Use
+Command: dumpsys sensorservice | grep 'active' | grep -v '0'
+Description: Shows currently used sensors
+Result:
+8 active connections
+Status: INFO
+
+# === USER & PRIVACY ===
+Check: Network Telemetry
+Command: settings get global usage_reporting_enabled
+Description: Should be disabled unless required
+Result:
+null
+Status: INFO
+
+# === VOICE ASSISTANT ===
+Check: Voice Match/OK Google
+Command: settings get secure voice_interaction_service
+Description: Voice assistant service configuration
+Result:
+com.google.android.googlequicksearchbox/com.google.android.voiceinteraction.GsaVoiceInteractionService
+Status: SAFE
+
+# === VOICE ASSISTANT ===
+Check: Always-On Listening (Hotword)
+Command: dumpsys voiceinteraction 2>/dev/null | grep -i 'hotword\|always.on' | head -1
+Description: Always-on voice listening is a privacy concern
+Result:
+
+Status: SAFE
+
+# === VOICE ASSISTANT ===
+Check: Voice Unlock Enabled
+Command: settings get secure lock_screen_allow_voice_unlock 2>/dev/null
+Description: Voice unlock is less secure than PIN/fingerprint
+Result:
+null
+Status: SAFE
+
+# === VOICE ASSISTANT ===
+Check: Assistant on Lock Screen
+Command: settings get secure assistant_on_lock_screen 2>/dev/null
+Description: Assistant on lock screen can leak information
+Result:
+null
+Status: SAFE
+
+# === VOICE ASSISTANT ===
+Check: Voice Recording History
+Command: settings get secure assist_screenshot_enabled 2>/dev/null
+Description: Assistant screenshot capture for context
+Result:
+null
+Status: SAFE
+
+# === WIFI EXTENDED ===
+Check: WiFi Direct Enabled
+Command: settings get global wifi_p2p_device_name 2>/dev/null
+Description: WiFi Direct can expose device to nearby attacks
+Result:
+null
+Status: SAFE
+
+# === WIFI EXTENDED ===
+Check: Mobile Hotspot Active
+Command: dumpsys wifi 2>/dev/null | grep -i 'SoftAP.*enabled'
+Description: Mobile hotspot creates attack surface
+Result:
+
+Status: SAFE
+
+# === WIFI EXTENDED ===
+Check: Hotspot SSID Broadcast
+Command: settings get global tether_wifi_ssid 2>/dev/null
+Description: Hotspot SSID configuration
+Result:
+null
+Status: SAFE
+
+# === WIFI EXTENDED ===
+Check: Saved Networks Count
+Command: wpa_cli list_networks 2>/dev/null | tail -n +2 | wc -l || dumpsys wifi 2>/dev/null | grep 'ConfigKey' | wc -l
+Description: Number of saved WiFi networks
+Result:
+0
+Status: SAFE
+
+# === WIFI EXTENDED ===
+Check: Open Networks Saved
+Command: dumpsys wifi 2>/dev/null | grep -E 'KeyMgmt.*NONE' | wc -l
+Description: Open (unencrypted) networks saved
+Result:
+9
+Status: WARNING
+
+# === WIFI EXTENDED ===
+Check: WiFi Scanning Always Available
+Command: settings get global wifi_scan_always_enabled
+Description: Background WiFi scanning for location
+Result:
+1
+Status: WARNING
+
+# === WIFI EXTENDED ===
+Check: Miracast/Screen Cast
+Command: settings get global wifi_display_on 2>/dev/null
+Description: Wireless display broadcasting status
+Result:
+0
+Status: SAFE
+
+# === WIFI EXTENDED ===
+Check: WiFi MAC Randomization
+Command: settings get global wifi_connected_mac_randomization_enabled 2>/dev/null
+Description: WiFi MAC randomization prevents tracking
+Result:
+null
+Status: WARNING
+
+======================================
+ANDROID/LINUX AUDIT COMPLETED
+Target              : R9ZT4030EDK
+Safe Checks        : 143
+Warnings           : 47
+High Issues        : 8
+Critical Issues    : 31
+Info               : 28
+TXT Report         : android_audit_output/txt_report_20260201_105404/audit_report.txt
+HTML Report        : android_audit_output/html_report_20260201_105404/audit_report.html
+CSV Report         : android_audit_output/html_report_20260201_105404/audit_report.csv
+======================================
